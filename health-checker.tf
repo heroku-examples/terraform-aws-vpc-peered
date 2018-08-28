@@ -44,7 +44,7 @@ resource "heroku_formation" "health" {
 }
 
 resource "aws_iam_role" "ecs_instance_role" {
-  name = "ecsInstanceRole"
+  name = "${var.name}-ecsInstanceRole"
 
   assume_role_policy = <<EOF
 {
@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "ecs_ec2_instance" {
 }
 
 resource "aws_iam_instance_profile" "ecs_ec2_instance" {
-  name = "ecs-ec2-instance"
+  name = "${var.name}-ecs-ec2-instance"
   role = "${aws_iam_role.ecs_instance_role.name}"
 }
 
@@ -124,7 +124,7 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_security_group" "health_checker_container" {
-  name        = "health-checker-container"
+  name        = "${var.name}-health-checker-container"
   description = "controls access to the Health Checker web app container"
   vpc_id      = "${module.heroku_aws_vpc.id}"
 
@@ -148,7 +148,7 @@ resource "aws_security_group" "health_checker_container" {
 }
 
 resource "aws_ecs_cluster" "health_checker" {
-  name = "health-checker-cluster"
+  name = "${var.name}-health-checker-cluster"
 }
 
 data "template_file" "health_checker_container" {
@@ -163,17 +163,17 @@ data "template_file" "health_checker_container" {
 }
 
 resource "aws_ecs_task_definition" "health_checker" {
-  family                = "health-checker-app-task"
+  family                = "${var.name}-health-checker-app-task"
   container_definitions = "${data.template_file.health_checker_container.rendered}"
 }
 
 resource "aws_ecs_service" "health_checker" {
-  name            = "health-checker-service"
+  name            = "${var.name}-health-checker-service"
   cluster         = "${aws_ecs_cluster.health_checker.id}"
   task_definition = "${aws_ecs_task_definition.health_checker.arn}"
   desired_count   = "${var.health_checker_app_count}"
 }
 
 resource "aws_cloudwatch_log_group" "health_checker" {
-  name = "/ecs/health-checker-app"
+  name = "/ecs/${var.name}"
 }
