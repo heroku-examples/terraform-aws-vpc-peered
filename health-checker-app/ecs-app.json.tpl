@@ -4,7 +4,9 @@
     "image": "${app_image}",
     "cpu": 0,
     "environment": [
-      { "name" : "PORT", "value" : "${app_port}" }
+      { "name" : "PORT", "value" : "${app_port}" },
+      { "name" : "HEALTH_CHECKER_PEER_URL", "value" : "${peer_url}" },
+      { "name" : "HEALTH_CHECKER_SELF_URL", "value" : "${self_url}" }
     ],
     "essential": true,
     "memoryReservation": 256,

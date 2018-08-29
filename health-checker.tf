@@ -12,11 +12,6 @@ resource "heroku_app" "health" {
 
   region           = "${lookup(var.aws_to_heroku_private_region, var.aws_region)}"
   internal_routing = true
-
-  config_vars {
-    HEALTH_CHECKER_PEER_URL = "http://${aws_instance.health_checker.private_dns}"
-    HEALTH_CHECKER_SELF_URL = "http://${var.name}-health.herokuapp.com"
-  }
 }
 
 resource "heroku_slug" "health" {
@@ -129,14 +124,10 @@ resource "aws_security_group" "health_checker_container" {
   vpc_id      = "${module.heroku_aws_vpc.id}"
 
   ingress {
-    from_port = "${var.health_checker_app_port}"
-    to_port   = "${var.health_checker_app_port}"
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      "${module.heroku_aws_vpc.cidr}",
-      "${data.heroku_space_peering_info.default.dyno_cidr_blocks}",
-    ]
+    from_port   = "${var.health_checker_app_port}"
+    to_port     = "${var.health_checker_app_port}"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -159,6 +150,8 @@ data "template_file" "health_checker_container" {
     aws_region = "${var.aws_region}"
     app_port   = "${var.health_checker_app_port}"
     logs_group = "${aws_cloudwatch_log_group.health_checker.name}"
+    peer_url   = "http://${var.name}-health.herokuapp.com"
+    self_url   = "http://${aws_instance.health_checker.private_dns}"
   }
 }
 
