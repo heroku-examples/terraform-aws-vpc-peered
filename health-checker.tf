@@ -22,11 +22,11 @@ resource "heroku_app" "health" {
 resource "heroku_slug" "health" {
   app                            = "${heroku_app.health.id}"
   buildpack_provided_description = "Node.js"
-  commit_description             = "manual slug build"
+  commit_description             = "manual slug build v4"
   file_path                      = "${var.health_app_slug_file_path}"
 
   process_types = {
-    web = "node-v10.9.0-linux-x64/bin/npm start"
+    web = "npm start"
   }
 }
 
