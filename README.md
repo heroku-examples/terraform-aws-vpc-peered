@@ -20,15 +20,17 @@ With policies:
 ## Usage
 
 ```bash
+export \
+  TF_VAR_heroku_email=name@example.com \
+  TF_VAR_heroku_enterprise_team=xxxxx \
+  TF_VAR_heroku_api_key=xxxxx \
+  TF_VAR_aws_access_key=xxxxx \
+  TF_VAR_aws_secret_key=xxxxx \
+  TF_VAR_instance_public_key='ssh-rsa xxxxx…' 
+
 terraform apply \
-  -var name=my-project \
-  -var heroku_email=name@example.com \
-  -var heroku_api_key=wwwww \
-  -var heroku_enterprise_team=my-team \
-  -var aws_access_key=xxxxx \
-  -var aws_secret_key=yyyyy \
-  -var aws_region=us-west-2 \
-  -var instance_public_key='ssh-rsa xxxxxxxxx…' 
+  -var name=my-deployment-name \
+  -var aws_region=us-west-2
 ```
 
 Once apply completes successfully, visit the output `health_public_url` in a web browser.
