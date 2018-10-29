@@ -28,6 +28,8 @@ export \
   TF_VAR_aws_secret_key=xxxxx \
   TF_VAR_instance_public_key='ssh-rsa xxxxx…' 
 
+terraform init
+
 terraform apply \
   -var name=my-deployment-name \
   -var aws_region=us-west-2
